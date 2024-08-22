@@ -30,7 +30,7 @@ class AtariEnv:
         return np.stack(self.frames, axis=0), total_reward, done, info
 
     def preprocess(self, frame):
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         frame = cv2.resize(frame, (84, 84), interpolation=cv2.INTER_AREA)
         frame = frame / 255.0
         return frame
