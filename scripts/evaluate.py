@@ -1,4 +1,3 @@
-# src/scripts/evaluate.py
 import torch
 from src.envs.atari_env import AtariEnv
 from src.agents.dqn import DQNAgent

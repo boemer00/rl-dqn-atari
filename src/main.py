@@ -1,6 +1,6 @@
 import torch
-from src.envs.atari_env import AtariEnv
-from src.agents.dqn import DQNAgent
+from agents.dqn import DQNAgent
+from envs.atari_env import AtariEnv
 
 def main():
     env_name = "Breakout-v0"
