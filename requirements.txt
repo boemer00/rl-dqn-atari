@@ -2,6 +2,7 @@ numpy
 gym
 torch
 matplotlib
+opencv-python
 seaborn
 pyyaml
 tensorboard
