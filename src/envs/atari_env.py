@@ -1,7 +1,7 @@
-from collections import deque
-import gym
+import gymnasium as gym
 import numpy as np
-from cv2
+import cv2
+from collections import deque
 
 class AtariEnv:
     def __init__(self, env_name, frame_skip=4, frame_stack=4):
@@ -11,7 +11,7 @@ class AtariEnv:
         self.frames = deque(maxlen=frame_stack)
 
     def reset(self):
-        state = self.env.reset()
+        state, _ = self.env.reset()
         state = self.preprocess(state)
         for _ in range(self.frame_stack):
             self.frames.append(state)
@@ -21,7 +21,7 @@ class AtariEnv:
         total_reward = 0
         done = False
         for _ in range(self.frame_skip):
-            next_state, reward, done, info = self.env.step(action)
+            next_state, reward, done, _, info = self.env.step(action)
             total_reward += reward
             if done:
                 break
@@ -30,9 +30,8 @@ class AtariEnv:
         return np.stack(self.frames, axis=0), total_reward, done, info
 
     def preprocess(self, frame):
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
         frame = cv2.resize(frame, (84, 84), interpolation=cv2.INTER_AREA)
-        frame = frame / 255.0
         return frame
 
     def render(self):

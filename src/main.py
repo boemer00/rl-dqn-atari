@@ -1,9 +1,9 @@
 import torch
-from agents.dqn import DQNAgent
-from envs.atari_env import AtariEnv
+from src.agents.dqn import DQNAgent
+from src.envs.atari_env import AtariEnv
 
 def main():
-    env_name = "Breakout-v0"
+    env_name = "ALE/Breakout-v5"
     env = AtariEnv(env_name)
     state_dim = (4, 84, 84)
     action_dim = env.env.action_space.n
@@ -28,7 +28,7 @@ def main():
         print(f"Episode: {episode + 1}, Total Reward: {total_reward}")
 
     # Save the model
-    torch.save(agent.q_network.state_dict(), "breakout_dqn.pth")
+    torch.save(agent.q_network.state_dict(), "atari_dqn.pth")
 
 if __name__ == "__main__":
     main()

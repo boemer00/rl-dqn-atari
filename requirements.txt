@@ -1,5 +1,6 @@
-numpy
-gym
+ale-py==0.9.1
+numpy==1.23.5
+gymnasium==0.29.1
 torch
 matplotlib
 opencv-python
