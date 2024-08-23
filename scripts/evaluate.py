@@ -9,7 +9,7 @@ def evaluate():
     action_dim = env.env.action_space.n
 
     agent = DQNAgent(state_dim=state_dim, action_dim=action_dim)
-    agent.q_network.load_state_dict(torch.load("atari_dqn.pth"))
+    agent.q_network.load_state_dict(torch.load("../atari_dqn.pth"))
     agent.epsilon = 0  # No exploration during evaluation
 
     num_episodes = 10

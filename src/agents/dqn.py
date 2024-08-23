@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
@@ -6,9 +7,10 @@ from src.models.q_network import QNetwork
 from src.agents.replay_buffer import ReplayBuffer
 
 class DQNAgent:
-    def __init__(self, state_dim, action_dim, lr=0.001, gamma=0.99, epsilon=1.0, epsilon_decay=0.995, epsilon_min=0.01, buffer_capacity=10000, batch_size=64, seed=42):
-        if seed is not None:
-            self.set_seed(seed)
+    def __init__(self, state_dim, action_dim, lr=0.001, gamma=0.99, epsilon=1.0,
+                 epsilon_decay=0.995, epsilon_min=0.01, buffer_capacity=10000, batch_size=64, seed=42):
+        self.seed = seed
+        self.set_seed(seed)
 
         self.state_dim = state_dim
         self.action_dim = action_dim
@@ -22,6 +24,13 @@ class DQNAgent:
         self.replay_buffer = ReplayBuffer(buffer_capacity)
         self.batch_size = batch_size
         self.update_target_network()
+
+    def set_seed(self, seed):
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
 
     def update_target_network(self):
         self.target_network.load_state_dict(self.q_network.state_dict())
@@ -43,11 +52,16 @@ class DQNAgent:
         batch = self.replay_buffer.sample(self.batch_size)
         state_batch, action_batch, reward_batch, next_state_batch, done_batch = zip(*batch)
 
-        state_batch = torch.FloatTensor(state_batch)
-        action_batch = torch.LongTensor(action_batch)
-        reward_batch = torch.FloatTensor(reward_batch)
-        next_state_batch = torch.FloatTensor(next_state_batch)
-        done_batch = torch.FloatTensor(done_batch)
+        # state_batch = torch.FloatTensor(state_batch)
+        # action_batch = torch.LongTensor(action_batch)
+        # reward_batch = torch.FloatTensor(reward_batch)
+        # next_state_batch = torch.FloatTensor(next_state_batch)
+        # done_batch = torch.FloatTensor(done_batch)
+        state_batch = torch.tensor(np.array(state_batch), dtype=torch.float32)
+        action_batch = torch.tensor(np.array(action_batch), dtype=torch.int64)
+        reward_batch = torch.tensor(np.array(reward_batch), dtype=torch.float32)
+        next_state_batch = torch.tensor(np.array(next_state_batch), dtype=torch.float32)
+        done_batch = torch.tensor(np.array(done_batch), dtype=torch.float32)
 
         q_values = self.q_network(state_batch)
         next_q_values = self.target_network(next_state_batch)
