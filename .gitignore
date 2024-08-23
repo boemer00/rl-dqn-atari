@@ -80,13 +80,13 @@ dmypy.json
 logs/
 *.log
 
-# # Ignore models or large datasets
-# models/
-# *.h5
-# *.ckpt
-# *.pth
-# *.pt
-# *.model
+# Ignore models or large datasets
+models/
+*.h5
+*.ckpt
+*.pth
+*.pt
+*.model
 
 # Ignore TensorBoard and other output
 logs/
