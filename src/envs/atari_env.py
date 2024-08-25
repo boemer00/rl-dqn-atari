@@ -5,7 +5,8 @@ from collections import deque
 
 class AtariEnv:
     def __init__(self, env_name, frame_skip=4, frame_stack=4):
-        self.env = gym.make(env_name)
+        self.env = gym.make(env_name, render_mode="rgb_array")
+        print("Environment Metadata:", self.env.metadata)
         self.frame_skip = frame_skip
         self.frame_stack = frame_stack
         self.frames = deque(maxlen=frame_stack)
@@ -35,4 +36,4 @@ class AtariEnv:
         return frame
 
     def render(self):
-        self.env.render()
+        self.env.render(mode='rgb_array')
