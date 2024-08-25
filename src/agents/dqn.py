@@ -7,8 +7,8 @@ from src.models.q_network import QNetwork
 from src.agents.replay_buffer import ReplayBuffer
 
 class DQNAgent:
-    def __init__(self, state_dim, action_dim, lr=0.001, gamma=0.99, epsilon=1.0,
-                 epsilon_decay=0.995, epsilon_min=0.01, buffer_capacity=10000, batch_size=64, seed=42):
+    def __init__(self, state_dim, action_dim, lr=0.001, gamma=0.99, epsilon=1.0, epsilon_decay=0.995,
+                 epsilon_min=0.01, buffer_capacity=10000, batch_size=64, device="cpu", seed=42):
         self.seed = seed
         self.set_seed(seed)
 
@@ -23,6 +23,7 @@ class DQNAgent:
         self.epsilon_min = epsilon_min
         self.replay_buffer = ReplayBuffer(buffer_capacity)
         self.batch_size = batch_size
+        self.device = device
         self.update_target_network()
 
     def set_seed(self, seed):
