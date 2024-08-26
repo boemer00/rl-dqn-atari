@@ -24,7 +24,7 @@ def evaluate(env_name, model_path, num_episodes=1, save_video=True, frame_save_f
     print("Creating agent...")
     agent = DQNAgent(state_dim=state_dim, action_dim=action_dim, device=device)
     print("Agent created.")
-
+    
     try:
         print(f"Loading model from {model_path}...")
         state_dict = torch.load(model_path, map_location=device)
@@ -58,29 +58,29 @@ def evaluate(env_name, model_path, num_episodes=1, save_video=True, frame_save_f
             print(f"Step {step}")
             print(f"State shape: {state.shape}, Type: {state.dtype}, Min: {np.min(state)}, Max: {np.max(state)}")
             start_time = time.time()
-
+            
             # Normalize state
             state_normalized = state.astype(np.float32) / 255.0
             state_tensor = torch.FloatTensor(state_normalized).unsqueeze(0).to(device)
-
+            
             with torch.no_grad():
                 q_values = agent.q_network(state_tensor)
-
+            
             q_values_np = q_values.cpu().numpy()[0]
             q_values_stats.append(q_values_np)
-
+            
             # Epsilon-greedy action selection
             if np.random.random() < epsilon:
                 action = env.env.action_space.sample()
             else:
                 action = q_values.argmax().item()
-
+            
             print(f"Q-values: {q_values_np}")
             print(f"Selected action: {action}")
-
+            
             next_state, reward, done, info = env.step(action)
             print(f"Reward: {reward}, Done: {done}")
-
+            
             state = next_state
             total_reward += reward
 
@@ -111,8 +111,21 @@ def evaluate(env_name, model_path, num_episodes=1, save_video=True, frame_save_f
 
     if save_video and all_frames:
         video_path = 'breakout_eval.mp4'
-        imageio.mimsave(video_path, all_frames, fps=30)
-        print(f"Evaluation video saved to {video_path}")
+        try:
+            print(f"Attempting to save video to {video_path}")
+            imageio.mimsave(video_path, all_frames, fps=30)
+            print(f"Evaluation video saved to {video_path}")
+        except Exception as e:
+            print(f"Error saving video: {e}")
+            print("Falling back to saving individual frames...")
+            
+            # Fallback: Save individual frames
+            frames_dir = 'evaluation_frames'
+            os.makedirs(frames_dir, exist_ok=True)
+            for i, frame in enumerate(all_frames):
+                frame_path = os.path.join(frames_dir, f'frame_{i:04d}.png')
+                imageio.imwrite(frame_path, frame)
+            print(f"Individual frames saved to {frames_dir}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate DQN agent on Atari Breakout")
