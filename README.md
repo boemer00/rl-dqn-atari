@@ -90,6 +90,8 @@ This will run the agent for 10 episodes and save a video of the gameplay (if pos
 
 The current implementation shows improvement in playing Breakout, with the agent achieving scores around 7.0 in recent evaluations. However, there is still room for significant improvement to reach human-level performance.
 
+![screnshot](atari_rl.png)
+
 ## Known Issues and Future Improvements
 
 1. Video Saving: There may be issues with saving gameplay videos depending on the system setup. A fallback to saving individual frames has been implemented.
