@@ -14,8 +14,8 @@ class DQNAgent:
 
         self.state_dim = state_dim
         self.action_dim = action_dim
-        self.q_network = QNetwork(state_dim, action_dim)
-        self.target_network = QNetwork(state_dim, action_dim)
+        self.q_network = QNetwork(state_dim, action_dim).to(device)
+        self.target_network = QNetwork(state_dim, action_dim).to(device)
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=lr)
         self.gamma = gamma
         self.epsilon = epsilon
