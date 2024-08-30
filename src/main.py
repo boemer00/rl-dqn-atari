@@ -1,10 +1,14 @@
 import torch
 import numpy as np
 from tqdm import tqdm
+
 from src.agents.dqn import DQNAgent
 from src.envs.atari_env import AtariEnv
 
 def main():
+    """
+    Train a DQN agent on the Atari Breakout environment.
+    """
     # Hyperparameters
     env_name = "ALE/Breakout-v5"
     num_episodes = 10000
@@ -26,13 +30,18 @@ def main():
     action_dim = env.env.action_space.n
 
     device = torch.device("cpu")
-    agent = DQNAgent(state_dim=state_dim, action_dim=action_dim, 
-                     lr=learning_rate, gamma=gamma, 
-                     epsilon=epsilon_start, epsilon_decay=epsilon_decay, 
-                     epsilon_min=epsilon_end, 
-                     buffer_capacity=replay_buffer_size, 
-                     batch_size=batch_size, 
-                     device=device)
+    agent = DQNAgent(
+        state_dim=state_dim,
+        action_dim=action_dim,
+        lr=learning_rate,
+        gamma=gamma,
+        epsilon=epsilon_start,
+        epsilon_decay=epsilon_decay,
+        epsilon_min=epsilon_end,
+        buffer_capacity=replay_buffer_size,
+        batch_size=batch_size,
+        device=device
+    )
 
     # Training loop
     total_steps = 0
@@ -41,7 +50,7 @@ def main():
     for episode in tqdm(range(num_episodes), desc="Training"):
         state = env.reset()
         episode_reward = 0
-        
+
         for step in range(max_steps_per_episode):
             action = agent.select_action(state)
             next_state, reward, done, _ = env.step(action)
@@ -62,7 +71,7 @@ def main():
         # Epsilon decay
         agent.epsilon = max(agent.epsilon * agent.epsilon_decay, agent.epsilon_min)
 
-        print(f"Episode {episode + 1}/{num_episodes}, Reward: {episode_reward}, Epsilon: {agent.epsilon:.4f}")
+        print(f"Episode {episode + 1}/{num_episodes}, Reward: {episode_reward}, Epsilon: {agent.epsilon:.4f}, Total Steps: {total_steps}")
 
         # Save the best model
         if episode_reward > best_reward:
@@ -88,4 +97,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"An error occurred: {e}")
         import traceback
-        traceback.print_exc()
+        traceback.print_exc()  # Provides detailed error information
