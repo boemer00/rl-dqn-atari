@@ -1,17 +1,34 @@
 import os
-import torch
 import time
-import imageio
 import argparse
+
 import numpy as np
+import torch
+import imageio
 from tqdm import tqdm
+
 from src.envs.atari_env import AtariEnv
 from src.agents.dqn import DQNAgent
 
 def get_device():
-    return torch.device("cpu")  # Force CPU usage for MacBook Pro 2013
+    """Force CPU usage for MacBook Pro 2013."""
+    return torch.device("cpu")
 
 def evaluate(env_name, model_path, num_episodes=1, save_video=True, frame_save_freq=1, max_steps=10000):
+    """
+    Evaluate a DQN agent in a specified Atari environment.
+
+    Args:
+        env_name (str): Name of the Atari environment.
+        model_path (str): Path to the trained DQN model.
+        num_episodes (int, optional): Number of episodes to evaluate. Defaults to 1.
+        save_video (bool, optional): Whether to save the evaluation video. Defaults to True.
+        frame_save_freq (int, optional): Frequency of frame saving. Defaults to 1.
+        max_steps (int, optional): Maximum number of steps per episode. Defaults to 10000.
+
+    Returns:
+        None
+    """
     device = get_device()
     print(f"Using device: {device}")
 
@@ -24,7 +41,7 @@ def evaluate(env_name, model_path, num_episodes=1, save_video=True, frame_save_f
     print("Creating agent...")
     agent = DQNAgent(state_dim=state_dim, action_dim=action_dim, device=device)
     print("Agent created.")
-    
+
     try:
         print(f"Loading model from {model_path}...")
         state_dict = torch.load(model_path, map_location=device)
@@ -58,29 +75,29 @@ def evaluate(env_name, model_path, num_episodes=1, save_video=True, frame_save_f
             print(f"Step {step}")
             print(f"State shape: {state.shape}, Type: {state.dtype}, Min: {np.min(state)}, Max: {np.max(state)}")
             start_time = time.time()
-            
+
             # Normalize state
             state_normalized = state.astype(np.float32) / 255.0
             state_tensor = torch.FloatTensor(state_normalized).unsqueeze(0).to(device)
-            
+
             with torch.no_grad():
                 q_values = agent.q_network(state_tensor)
-            
+
             q_values_np = q_values.cpu().numpy()[0]
             q_values_stats.append(q_values_np)
-            
+
             # Epsilon-greedy action selection
             if np.random.random() < epsilon:
                 action = env.env.action_space.sample()
             else:
                 action = q_values.argmax().item()
-            
+
             print(f"Q-values: {q_values_np}")
             print(f"Selected action: {action}")
-            
+
             next_state, reward, done, info = env.step(action)
             print(f"Reward: {reward}, Done: {done}")
-            
+
             state = next_state
             total_reward += reward
 
@@ -118,7 +135,7 @@ def evaluate(env_name, model_path, num_episodes=1, save_video=True, frame_save_f
         except Exception as e:
             print(f"Error saving video: {e}")
             print("Falling back to saving individual frames...")
-            
+
             # Fallback: Save individual frames
             frames_dir = 'evaluation_frames'
             os.makedirs(frames_dir, exist_ok=True)
