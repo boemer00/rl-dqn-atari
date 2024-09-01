@@ -36,6 +36,12 @@ rl-dqn-atari/
 ├── scripts/
 │   └── evaluate_2.py
 │
+├── tests/
+│   ├── test_dqn.py
+│   ├── test_atari_env.py
+│   ├── test_q_network.py
+│   └── test_integration.py
+│
 ├── requirements.txt
 └── README.md
 ```
